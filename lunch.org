@@ -1,0 +1,54 @@
+#+TITLE: Lunch
+#+STARTUP: inlineimages
+
+* Week: [0/8] [0%]
+1) [ ] Sat: Butter Chicken
+2) [ ] Sun: Tuna poke bowl
+3) [ ] Mon: Mushroom risotto
+4) [ ] Tue: Spaghetti Carbonara
+5) [ ] Wed: Falafel
+6) [ ] Thu: Burger
+7) [ ] Fri: etc..
+8) [ ] Sat: etc..
+
+* TODO Shopping List [0/5] [0%]
+** TODO Eggs
+** TODO Bread
+** TODO Milk
+** TODO Coffee
+** TODO etc..
+
+* Utilities:
+#+BEGIN_SRC emacs-lisp
+(org-map-entries #'org-toggle-checkbox "LEVEL=1" 'file) ; Eval C-c C-c
+#+end_src
+
+#+begin_src emacs-lisp
+(defconst qrpath
+  (expand-file-name "~/notes/shopping.png"))
+
+(defun find-shopping-items ()
+  (goto-char (point-min))
+  (when (re-search-forward ".*Shopping List.*" nil t)
+      (let* ((element (org-element-at-point))
+             (end     (org-element-property :end element))
+             items    '())
+        (while (re-search-forward "\\*\\* TODO \\(.*\\)" end t)
+          (push (match-string 1) items))
+        (mapconcat #'identity (nreverse items) "\n"))))
+
+;; needs sudo apt-get install qrencode
+;; C-c C-c to generate QR code from the shopping list
+(defun shopping-list-to-qr ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((items (find-shopping-items)))
+      (when items
+        (call-process "qrencode" nil nil nil "-o" qrpath "-s" "10" items)
+        (goto-char (point-max))
+        (insert (format "\n[[file:%s]]" qrpath))
+        (org-display-inline-images t t)))))
+
+(shopping-list-to-qr)
+#+end_src
