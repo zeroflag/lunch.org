@@ -1,5 +1,6 @@
 #+TITLE: Lunch
 #+STARTUP: inlineimages
+#+STARTUP: showall
 
 * Week: [0/8] [0%]
 1) [ ] Sat: Butter Chicken
@@ -18,9 +19,14 @@
 ** TODO Coffee
 ** TODO etc..
 
-* Utilities:
+* Code
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+
 #+BEGIN_SRC emacs-lisp
-(org-map-entries #'org-toggle-checkbox "LEVEL=1" 'file) ; Eval C-c C-c
+(defun toggle ()
+  (org-map-entries #'org-toggle-checkbox "LEVEL=2" 'file)) ; Eval C-c C-c / Enter
 #+end_src
 
 #+begin_src emacs-lisp
@@ -38,7 +44,6 @@
         (mapconcat #'identity (nreverse items) "\n"))))
 
 ;; needs sudo apt-get install qrencode
-;; C-c C-c to generate QR code from the shopping list
 (defun shopping-list-to-qr ()
   (interactive)
   (save-excursion
@@ -49,6 +54,8 @@
         (goto-char (point-max))
         (insert (format "\n[[file:%s]]" qrpath))
         (org-display-inline-images t t)))))
-
-(shopping-list-to-qr)
 #+end_src
+
+# Local variables:
+# eval: (org-babel-execute-buffer)
+# End:
