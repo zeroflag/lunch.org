@@ -19,6 +19,10 @@
 ** TODO Coffee
 ** TODO etc..
 
+* Operations
+** [[elisp:(toggle)][Toggle Check Boxes]]
+** [[elisp:(shopping-list-to-qr)][Generate QR Code]]
+
 * Code
 :PROPERTIES:
 :VISIBILITY: folded
