@@ -2,7 +2,8 @@
 #+STARTUP: inlineimages
 #+STARTUP: showall
 
-* Week: [0/8] [0%]
+* Plan
+** Week [0/8] [0%]
 1) [ ] Sat: Butter Chicken
 2) [ ] Sun: Tuna poke bowl
 3) [ ] Mon: Mushroom risotto
@@ -11,17 +12,19 @@
 6) [ ] Thu: Burger
 7) [ ] Fri: etc..
 8) [ ] Sat: etc..
+ 
+** Shopping List [0/5] [0%]
+*** TODO Eggs
+*** TODO Bread
+*** TODO Milk
+*** TODO Coffee
+*** TODO etc..
 
-* TODO Shopping List [0/5] [0%]
-** TODO Eggs
-** TODO Bread
-** TODO Milk
-** TODO Coffee
-** TODO etc..
-
-* Operations
-** [[elisp:(toggle)][Toggle Check Boxes]]
-** [[elisp:(shopping-list-to-qr)][Generate QR Code]]
+** Operations
+*** [[elisp:(lunch-reset-week)][Reset Week]]
+*** [[elisp:(lunch-toggle-checkboxes)][Toggle Check Boxes]]
+*** [[elisp:(lunch-clear-items)][Clear Items]]
+*** [[elisp:(shopping-list-to-qr)][Generate QR Code]]
 
 * Code
 :PROPERTIES:
@@ -29,9 +32,24 @@
 :END:
 
 #+BEGIN_SRC emacs-lisp
-(defun toggle ()
+(defun lunch-toggle-checkboxes ()
   (org-map-entries #'org-toggle-checkbox "LEVEL=2" 'file)) ; Eval C-c C-c / Enter
+
+(defun lunch-clear-items ()
+  (goto-char (point-min))
+  (when (re-search-forward ".*Week.*" nil t)
+    (let* ((element (org-element-at-point))
+           (end     (org-element-property :end element)))
+      (while (re-search-forward ".*\\[[X ]\\] [[:word:]]+: \\(.*\\)" end t)
+        (replace-match "" nil nil nil 1)))))
+
+(defun lunch-reset-week ()
+  (lunch-clear-items)
+  (lunch-toggle-checkboxes))
 #+end_src
+
+#+RESULTS:
+: lunch-reset-week
 
 #+begin_src emacs-lisp
 (defconst qrpath
@@ -59,6 +77,9 @@
         (insert (format "\n[[file:%s]]" qrpath))
         (org-display-inline-images t t)))))
 #+end_src
+
+#+RESULTS:
+: shopping-list-to-qr
 
 # Local variables:
 # eval: (org-babel-execute-buffer)
